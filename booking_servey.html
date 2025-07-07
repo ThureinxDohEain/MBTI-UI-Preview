@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Satisfaction Survey</title>
+    <!-- Google Fonts Import -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #123e55;
+            --body-font: 'Montserrat', sans-serif;
+            --title-font: 'Cinzel', serif;
+        }
+        body {
+            font-family: var(--body-font);
+            background-color: #f4f7f9;
+            color: var(--primary-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .survey-container {
+            max-width: 700px;
+            width: 100%;
+            background: #ffffff;
+            padding: 40px 50px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        .top-header {
+            text-align: left;
+            margin-bottom: 40px;
+        }
+        .top-header .main-title {
+            font-family: var(--title-font);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+        }
+        .top-header .date-stamp {
+            background-color: #f0f0f0;
+            color: #888;
+            font-size: 13px;
+            padding: 3px 10px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .intro-box {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+            font-size: 15px;
+            color: #333;
+        }
+
+        /* --- Progress Bar Styles --- */
+        .progress-container {
+            margin-bottom: 40px;
+            width: 100%;
+        }
+        .progress-text {
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+            margin-bottom: 8px;
+            font-family: var(--body-font);
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            height: 10px;
+        }
+        .progress-bar-filler {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary-color); /* Matches button color */
+            border-radius: 5px;
+            transition: width 0.4s ease-in-out;
+        }
+        /* --- End Progress Bar --- */
+
+        .form-step { display: none; }
+        .form-step.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .question-group {
+            margin-bottom: 30px;
+            border: none;
+            padding: 0;
+        }
+        .question-group legend, .question-group .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            padding: 0;
+            color: var(--primary-color);
+            width: 100%;
+        }
+        .question-group p {
+            font-size: 15px;
+            color: #555;
+            margin-top: -20px;
+            margin-bottom: 25px;
+            font-weight: 400;
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .option {
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        .option label {
+            margin-left: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            color: #333;
+        }
+        .option input[type="radio"], .option input[type="checkbox"] {
+            cursor: pointer;
+            transform: scale(1.2);
+            accent-color: var(--primary-color);
+        }
+        #other-text-container {
+            margin-top: 20px;
+        }
+        textarea, #other-text-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            font-family: var(--body-font);
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 30px;
+        }
+        .nav-btn, #submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: var(--body-font);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .nav-btn:hover, #submit-btn:hover {
+            opacity: 0.85;
+        }
+        .social-share-links {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+        }
+        .social-share-links a {
+            font-family: var(--body-font);
+            display: inline-block;
+            text-decoration: none;
+            color: #555;
+            border: 1px solid #ccc;
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .social-share-links a:hover {
+            background-color: #f0f0f0;
+            border-color: #aaa;
+        }
+        #form-response {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .step-error { color: #d9534f; font-size: 14px; margin-top: 15px; text-align: left; }
+        .response-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .response-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .required-star { color: #d9534f; margin-left: 2px; }
+    </style>
+</head>
+<body>
+
+    <div class="survey-container">
+        
+        <div class="top-header">
+            <h1 class="main-title">CUSTOMER SATISFACTION SURVEY TEMPLATE</h1>
+            <span class="date-stamp" id="current-date"></span>
+        </div>
+
+        <div class="intro-box" id="intro-box">
+            <p style="margin:0; color: #333; font-weight: 400;">Meanwhile, we'd like to hear your feedback. We would be grateful if you could kindly share your experience using our platform by completing the following:</p>
+        </div>
+        
+        <div class="progress-container" id="progress-container">
+            <div class="progress-text" id="progress-text"></div>
+            <div class="progress-bar">
+                <div class="progress-bar-filler" id="progress-filler"></div>
+            </div>
+        </div>
+
+        <form id="feedback-form">
+            <input type="hidden" id="user-name" name="user_name" value="<?php echo esc_attr( $user_name ); ?>">
+            <input type="hidden" id="user-email" name="user_email" value="<?php echo esc_attr( $user_email ); ?>">
+
+            <!-- Step 1: Brand Discovery -->
+            <div class="form-step active">
+                <fieldset class="question-group">
+                    <legend>Brand Discovery<span class="required-star">*</span></legend>
+                    <p>How did you learn about us? (Select all that applies)</p>
+                    <div class="options-grid">
+                        <div class="option"><input type="checkbox" id="discovery-search" name="brand_discovery" value="Online Search"><label for="discovery-search">Online Search</label></div>
+                        <div class="option"><input type="checkbox" id="discovery-social" name="brand_discovery" value="Social Media"><label for="discovery-social">Social Media</label></div>
+                        <div class="option"><input type="checkbox" id="discovery-referral" name="brand_discovery" value="Referral"><label for="discovery-referral">Referral</label></div>
+                        <div class="option"><input type="checkbox" id="discovery-newsletter" name="brand_discovery" value="Email Newsletter"><label for="discovery-newsletter">Email Newsletter</label></div>
+                        <div class="option"><input type="checkbox" id="discovery-other" name="brand_discovery" value="Other"><label for="discovery-other">Other</label></div>
+                    </div>
+                    <div id="other-text-container" style="display: none;">
+                        <input type="text" id="other-text-input" name="brand_discovery_other" placeholder="Please specify">
+                    </div>
+                </fieldset>
+            </div>
+            
+            <!-- Step 2: Website Navigation -->
+            <div class="form-step">
+                <fieldset class="question-group">
+                    <legend class="question-text">How easy was it to find the heritage property you were interested in our website?</legend>
+                    <div class="options-grid">
+                        <div class="option"><input type="radio" id="nav-very-easy" name="website_navigation" value="Very Easy"><label for="nav-very-easy">Very Easy</label></div>
+                        <div class="option"><input type="radio" id="nav-easy" name="website_navigation" value="Easy"><label for="nav-easy">Easy</label></div>
+                        <div class="option"><input type="radio" id="nav-not-sure" name="website_navigation" value="Not Sure"><label for="nav-not-sure">Not Sure</label></div>
+                        <div class="option"><input type="radio" id="nav-difficult" name="website_navigation" value="Difficult"><label for="nav-difficult">Difficult</label></div>
+                        <div class="option"><input type="radio" id="nav-very-difficult" name="website_navigation" value="Very Difficult"><label for="nav-very-difficult">Very Difficult</label></div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <!-- Step 3: Property and Activity Selection -->
+            <div class="form-step">
+                <fieldset class="question-group">
+                    <legend class="question-text">How satisfied are you with the collection of heritage properties and experiences available on our website?</legend>
+                     <div class="options-grid">
+                        <div class="option"><input type="radio" id="selection-very-satisfied" name="property_selection" value="Very Satisfied"><label for="selection-very-satisfied">Very Satisfied</label></div>
+                        <div class="option"><input type="radio" id="selection-satisfied" name="property_selection" value="Satisfied"><label for="selection-satisfied">Satisfied</label></div>
+                        <div class="option"><input type="radio" id="selection-not-sure" name="property_selection" value="Not Sure"><label for="selection-not-sure">Not Sure</label></div>
+                        <div class="option"><input type="radio" id="selection-unsatisfied" name="property_selection" value="Unsatisfied"><label for="selection-unsatisfied">Unsatisfied</label></div>
+                        <div class="option"><input type="radio" id="selection-very-unsatisfied" name="property_selection" value="Very Unsatisfied"><label for="selection-very-unsatisfied">Very Unsatisfied</label></div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <!-- Step 4: Booking Process -->
+            <div class="form-step">
+                <fieldset class="question-group">
+                    <legend class="question-text">How user-friendly was the booking process from selecting a room to completing your reservation?</legend>
+                    <div class="options-grid">
+                        <div class="option"><input type="radio" id="booking-very-friendly" name="booking_process" value="Very User-friendly"><label for="booking-very-friendly">Very User-friendly</label></div>
+                        <div class="option"><input type="radio" id="booking-friendly" name="booking_process" value="User-friendly"><label for="booking-friendly">User-friendly</label></div>
+                        <div class="option"><input type="radio" id="booking-not-sure" name="booking_process" value="Not Sure"><label for="booking-not-sure">Not Sure</label></div>
+                        <div class="option"><input type="radio" id="booking-complicated" name="booking_process" value="Complicated"><label for="booking-complicated">Complicated</label></div>
+                        <div class="option"><input type="radio" id="booking-very-complicated" name="booking_process" value="Very Complicated"><label for="booking-very-complicated">Very Complicated</label></div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <!-- Step 5: Recommendations -->
+            <div class="form-step">
+                <fieldset class="question-group">
+                    <legend class="question-text">What are your top 2 or 3 recommendations for improvements? (Optional)</legend>
+                    <textarea id="recommendations" name="recommendations" rows="5" placeholder="Your answer"></textarea>
+                </fieldset>
+            </div>
+            
+            <div id="step-error" class="step-error" style="display: none;"></div>
+            
+            <div class="navigation-buttons">
+                <button type="button" id="next-btn" class="nav-btn">Next</button>
+                <button type="submit" id="submit-btn" style="display:none;">Submit</button>
+            </div>
+        </form>
+
+        <div id="form-response" style="display: none;"></div>
+
+        <div class="social-share-links" id="social-links">
+            <a href="#" title="Share on Facebook">Share</a>
+            <a href="#" title="Share on Twitter">Tweet</a>
+            <a href="#" title="Share on Google+">G+ Share</a>
+            <a href="#" title="Pin on Pinterest">Pin</a>
+            <a href="#" title="Share on LinkedIn">LinkedIn</a>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Set date
+        const dateElement = document.getElementById('current-date');
+        dateElement.textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        const formSteps = Array.from(document.querySelectorAll('.form-step'));
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const form = document.getElementById('feedback-form');
+        const stepError = document.getElementById('step-error');
+        const responseDiv = document.getElementById('form-response');
+        const otherCheckbox = document.getElementById('discovery-other');
+        const otherTextContainer = document.getElementById('other-text-container');
+        const otherTextInput = document.getElementById('other-text-input');
+        
+        // Progress Bar elements
+        const progressContainer = document.getElementById('progress-container');
+        const progressText = document.getElementById('progress-text');
+        const progressFiller = document.getElementById('progress-filler');
+
+        let currentStep = 0;
+        const totalSteps = formSteps.length;
+
+        const updateForm = () => {
+            formSteps.forEach(step => step.classList.remove('active'));
+            formSteps[currentStep].classList.add('active');
+            
+            stepError.style.display = 'none';
+
+            // Update progress bar
+            const progressPercent = (currentStep / (totalSteps - 1)) * 100;
+            progressFiller.style.width = `${progressPercent}%`;
+            progressText.textContent = `Step ${currentStep + 1} / ${totalSteps}`;
+
+            // Update buttons
+            nextBtn.style.display = currentStep < totalSteps - 1 ? 'inline-block' : 'none';
+            submitBtn.style.display = currentStep === totalSteps - 1 ? 'inline-block' : 'none';
+        };
+
+        const validateStep = () => {
+            const currentStepElement = formSteps[currentStep];
+            let isValid = true;
+            stepError.textContent = '';
+            
+            if (currentStep === 0) { // Step 1 validation
+                const checkedCount = currentStepElement.querySelectorAll('input[name="brand_discovery"]:checked').length;
+                if (checkedCount === 0) {
+                    isValid = false;
+                    stepError.textContent = 'Please select at least one option.';
+                } else if (otherCheckbox.checked && otherTextInput.value.trim() === '') {
+                    isValid = false;
+                    stepError.textContent = 'Please specify your answer for "Other".';
+                }
+            } else if (currentStep > 0 && currentStep < 4) { // Steps 2, 3, 4 validation
+                if (!currentStepElement.querySelector('input[type="radio"]:checked')) {
+                    isValid = false;
+                    stepError.textContent = 'Please select an answer to proceed.';
+                }
+            }
+            
+            stepError.style.display = isValid ? 'none' : 'block';
+            return isValid;
+        };
+
+        otherCheckbox.addEventListener('change', () => {
+            otherTextContainer.style.display = otherCheckbox.checked ? 'block' : 'none';
+            if (!otherCheckbox.checked) {
+                otherTextInput.value = '';
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (validateStep()) {
+                if (currentStep < totalSteps - 1) {
+                    currentStep++;
+                    updateForm();
+                }
+            }
+        });
+        
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            if (!validateStep()) return;
+
+            const webhookUrl = 'https://n8n.doheain.com/webhook/8b00dd40-f50e-4fdd-bae3-d848b03780f3';
+            const OHH_Survey = 'X5ch5mpl82CblEqZQvRgHUXL4n8xU4A3rcJCvVXsaW3x8kOd6b';
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                if (key === 'brand_discovery') {
+                    if (!data[key]) data[key] = [];
+                    data[key].push(value);
+                } else if (value.trim() !== '') {
+                    data[key] = value;
+                }
+            });
+            
+            if (data.brand_discovery_other) {
+                const otherIndex = data.brand_discovery.indexOf('Other');
+                if (otherIndex > -1) {
+                    data.brand_discovery[otherIndex] = `Other: ${data.brand_discovery_other}`;
+                }
+                delete data.brand_discovery_other;
+            }
+            
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'OHH_Survey': OHH_Survey },
+                    body: JSON.stringify(data),
+                });
+                if (!response.ok) throw new Error(`Webhook failed: ${response.status}`);
+                
+                responseDiv.textContent = 'Thank you for your feedback!';
+                responseDiv.className = 'response-success';
+                responseDiv.style.display = 'block';
+
+                // Hide all survey elements
+                document.querySelector('.top-header').style.display = 'none';
+                document.getElementById('intro-box').style.display = 'none';
+                progressContainer.style.display = 'none';
+                form.style.display = 'none';
+                document.getElementById('social-links').style.display = 'none';
+
+            } catch (error) {
+                console.error('Submission Error:', error);
+                responseDiv.textContent = 'Sorry, an error occurred while submitting your feedback.';
+                responseDiv.className = 'response-error';
+                responseDiv.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit';
+            }
+        });
+        updateForm();
+    });
+</script>
+</body>
+</html>
